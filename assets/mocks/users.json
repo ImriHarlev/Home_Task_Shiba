@@ -1,0 +1,62 @@
+[
+    {
+      "id": "u001",
+      "credentials": {
+        "username": "user",
+        "password": "pass"
+      },
+      "firstName": "יוחנן",
+      "lastName": "כהן",
+      "email": "john.doe@example.com",
+      "age": 35,
+      "address": "רחוב ראשי 123, עיר כלשהי, קליפורניה 12345"
+    },
+    {
+      "id": "u002",
+      "credentials": {
+        "username": "User",
+        "password": "Pass"
+      },
+      "firstName": "יענה",
+      "lastName": "כהן",
+      "email": "jane.smith@example.com",
+      "age": 28,
+      "address": "רחוב האלון 456, ספרינגפילד, ניו יורק 54321"
+    },
+    {
+      "id": "u003",
+      "credentials": {
+        "username": "user",
+        "password": "pass"
+      },
+      "firstName": "מיכאל",
+      "lastName": "צ'ן",
+      "email": "michael.chen@example.com",
+      "age": 42,
+      "address": "שדרת האלון 789, סיאטל, וושינגטון 98105"
+    },
+    {
+      "id": "u004",
+      "credentials": {
+        "username": "user",
+        "password": "pass"
+      },
+      "firstName": "מריה",
+      "lastName": "גרסיה",
+      "email": "maria.garcia@example.com",
+      "age": 25,
+      "address": "שדרות האורן 1011, מיאמי, פלורידה 33133"
+    },
+    {
+      "id": "u005",
+      "credentials": {
+        "username": "user",
+        "password": "pass"
+      },
+      "firstName": "דוד",
+      "lastName": "קים",
+      "email": "david.kim@example.com",
+      "age": 60,
+      "address": "שדרות האדר 1234, שיקגו, אילינוי 60601"
+    }
+  ]
