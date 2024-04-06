@@ -12,6 +12,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import appointments from "../../../assets/mocks/appointments.json";
 import {
   Appointment,
+  AppointmentSearchData,
   AppointmentSubKind,
 } from "../../models/appointment.model";
 import ModalSelector from "react-native-modal-selector";
@@ -21,6 +22,7 @@ import { userAtom } from "../../../app/index";
 import { globalStyles } from "../../styles/global.styles";
 
 const AppointmentPage = () => {
+  //get global state user
   const user = useAtomValue(userAtom);
   const [dateRange, setDateRange] = React.useState<{
     startDate: Date | undefined;
@@ -57,7 +59,7 @@ const AppointmentPage = () => {
     AppointmentSubKind | undefined
   >();
 
-  // Function to handle medical kind selection 
+  // Function to handle medical kind selection
   const handleMedicalKindChange = (appointment: Appointment | undefined) => {
     setSelectedMedicalKind(appointment);
     setSubMedicalKinds(appointment?.subKinds);
@@ -68,21 +70,30 @@ const AppointmentPage = () => {
   const handleSubMedicalKindChange = (value: AppointmentSubKind) => {
     setSelectedSubMedicalKind(value);
   };
-  const handleSearch = () => {
-    //check for all the fields
-    if (
+
+  const validateFormData = () => {
+    return (
+      user === undefined ||
       dateRange.startDate === undefined ||
+      dateRange.endDate === undefined ||
       selectedMedicalKind === undefined ||
       selectedSubMedicalKind === undefined
-    ) {
-      alert(
-        "נא למלא את כל השדות"
-      );
+    );
+  };
+
+  const handleSearch = () => {
+    if (validateFormData()) {
+      alert("נא למלא את כל השדות");
       return;
     }
-    alert(
-      "ready to sent the 'appointmentSearchData' object to an API!"
-    );
+    let appointmentSearch: AppointmentSearchData = {
+      userId: user!.id,
+      appointmentKindId: selectedMedicalKind!.id,
+      appointmentSubKindId: selectedSubMedicalKind!.id,
+      startDate: dateRange.startDate!,
+      endDate: dateRange.endDate!,
+    };
+    alert("ready to sent the 'appointmentSearch' object to an API!");
   };
 
   return (
@@ -92,81 +103,82 @@ const AppointmentPage = () => {
           <Text style={appointmentPageStyles.headerText}>
             שלום, {user?.firstName}
           </Text>
-          <ModalSelector
-            data={appointments.map((appointment: Appointment) => {
-              return {
-                key: appointment.id,
-                label: appointment.value,
-                appointment: appointment,
-              };
-            })}
-            onChange={(option) => {
-              handleMedicalKindChange(option.appointment);
-            }}
-          >
-            <TextInput
-              style={[globalStyles.input, { color: "black" }]}
-              editable={false}
-              placeholder="בחר סוג פגישה"
-              value={selectedMedicalKind?.value}
-            />
-          </ModalSelector>
-          <ModalSelector
-            data={
-              subMedicalKinds?.map((subAppointment: AppointmentSubKind) => {
+          <View style={appointmentPageStyles.formContainer}>
+            <ModalSelector
+              data={appointments.map((appointment: Appointment) => {
                 return {
-                  key: subAppointment.id,
-                  label: subAppointment.value,
-                  subAppointment: subAppointment,
+                  key: appointment.id,
+                  label: appointment.value,
+                  appointment: appointment,
                 };
-              }) ?? []
-            }
-            onChange={(option) => {
-              handleSubMedicalKindChange(option.subAppointment);
-            }}
-          >
-            <TextInput
-              style={[globalStyles.input, { color: "black" }]}
-              editable={false}
-              placeholder="בחר תת סוג"
-              value={selectedSubMedicalKind?.value}
-            />
-          </ModalSelector>
-
-          <View style={appointmentPageStyles.dateTimePickerContainer}>
-            <Pressable onPress={() => setOpenDatePicker(true)}>
-              <Image
-                source={require("../../../assets/icons/calendar.png")}
-                style={appointmentPageStyles.calendarLogo}
-                resizeMode="contain"
+              })}
+              onChange={(option) => {
+                handleMedicalKindChange(option.appointment);
+              }}
+            >
+              <TextInput
+                style={globalStyles.input}
+                editable={false}
+                placeholder="בחר סוג פגישה"
+                value={selectedMedicalKind?.value}
               />
+            </ModalSelector>
+            <ModalSelector
+              data={
+                subMedicalKinds?.map((subAppointment: AppointmentSubKind) => {
+                  return {
+                    key: subAppointment.id,
+                    label: subAppointment.value,
+                    subAppointment: subAppointment,
+                  };
+                }) ?? []
+              }
+              onChange={(option) => {
+                handleSubMedicalKindChange(option.subAppointment);
+              }}
+            >
+              <TextInput
+                style={globalStyles.input}
+                editable={false}
+                placeholder="בחר תת סוג"
+                value={selectedSubMedicalKind?.value}
+              />
+            </ModalSelector>
+
+            <View style={appointmentPageStyles.dateTimePickerContainer}>
+              <Pressable onPress={() => setOpenDatePicker(true)}>
+                <Image
+                  source={require("../../../assets/icons/calendar.png")}
+                  style={appointmentPageStyles.calendarLogo}
+                  resizeMode="contain"
+                />
+              </Pressable>
+              {dateRange.startDate && dateRange.endDate && (
+                <Text style={appointmentPageStyles.dateText}>
+                  {dateRange.startDate.toLocaleDateString("he")} -{" "}
+                  {dateRange.endDate.toLocaleDateString("he")}
+                </Text>
+              )}
+              <DatePickerModal
+                validRange={{ startDate: new Date() }}
+                locale="he"
+                mode="range"
+                presentationStyle="pageSheet"
+                visible={openDatePicker}
+                onDismiss={onDismiss}
+                startDate={dateRange.startDate}
+                endDate={dateRange.endDate}
+                onConfirm={onDateConfirm}
+              />
+            </View>
+            <Pressable
+              style={globalStyles.PrimaryButton}
+              onPress={handleSearch}
+            >
+              <Text style={globalStyles.PrimaryButtonText}>חפש תורים</Text>
             </Pressable>
-            {dateRange.startDate && dateRange.endDate && (
-              <Text style={{ fontSize: 15 }}>
-                {dateRange.startDate.toLocaleDateString("he")} -{" "}
-                {dateRange.endDate.toLocaleDateString("he")}
-              </Text>
-            )}
-            <DatePickerModal
-              validRange={{ startDate: new Date() }}
-              locale="he"
-              mode="range"
-              presentationStyle="pageSheet"
-              visible={openDatePicker}
-              onDismiss={onDismiss}
-              startDate={dateRange.startDate}
-              endDate={dateRange.endDate}
-              onConfirm={onDateConfirm}
-            />
           </View>
-          <Pressable
-            style={globalStyles.PrimaryButton}
-            onPress={handleSearch}
-          >
-            <Text style={globalStyles.PrimaryButtonText}>
-              חפש תורים
-            </Text>
-          </Pressable>
+          <View></View>
         </View>
       </SafeAreaProvider>
     </SafeAreaView>
