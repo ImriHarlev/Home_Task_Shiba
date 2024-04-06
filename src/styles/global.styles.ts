@@ -1,14 +1,15 @@
 import { Platform, StyleSheet } from "react-native";
+import { COLORS } from "../constants/theme";
 export const globalStyles = StyleSheet.create({
     PrimaryButton: {
         padding: 15,
-        backgroundColor: "#EA3E85",
+        backgroundColor: COLORS.primary,
         borderRadius: 5,
         marginTop: 20,
         alignSelf: "center",
     },
     PrimaryButtonText: {
-        color: "#fff",
+        color: COLORS.lightWhite,
         fontSize: 16,
         textAlign: "center",
     },
@@ -17,7 +18,8 @@ export const globalStyles = StyleSheet.create({
         textAlign: "right",
         borderWidth: 1,
         borderRadius: 5,
-        backgroundColor: "#fff",
+        color: COLORS.black,
+        backgroundColor: COLORS.lightWhite,
     },
     androidSafeArea: {
         flex: 1,
